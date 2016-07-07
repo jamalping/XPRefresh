@@ -14,6 +14,14 @@
 		FB608E571D2EBB9F002DADE2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB608E551D2EBB9F002DADE2 /* LaunchScreen.storyboard */; };
 		FB608E621D2EBB9F002DADE2 /* XPRefreshExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E611D2EBB9F002DADE2 /* XPRefreshExampleTests.swift */; };
 		FB608E6D1D2EBB9F002DADE2 /* XPRefreshExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E6C1D2EBB9F002DADE2 /* XPRefreshExampleUITests.swift */; };
+		FB608E851D2EBBAA002DADE2 /* Component.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E7C1D2EBBAA002DADE2 /* Component.swift */; };
+		FB608E861D2EBBAA002DADE2 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E7E1D2EBBAA002DADE2 /* StringExtension.swift */; };
+		FB608E871D2EBBAA002DADE2 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E7F1D2EBBAA002DADE2 /* UILabelExtension.swift */; };
+		FB608E881D2EBBAA002DADE2 /* UIScrollViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E801D2EBBAA002DADE2 /* UIScrollViewExtension.swift */; };
+		FB608E891D2EBBAA002DADE2 /* UIViewEXtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E811D2EBBAA002DADE2 /* UIViewEXtension.swift */; };
+		FB608E8A1D2EBBAA002DADE2 /* Footer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E821D2EBBAA002DADE2 /* Footer.swift */; };
+		FB608E8B1D2EBBAA002DADE2 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E831D2EBBAA002DADE2 /* Header.swift */; };
+		FB608E8C1D2EBBAA002DADE2 /* XPRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FB608E841D2EBBAA002DADE2 /* XPRefresh.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +55,14 @@
 		FB608E681D2EBB9F002DADE2 /* XPRefreshExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XPRefreshExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB608E6C1D2EBB9F002DADE2 /* XPRefreshExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPRefreshExampleUITests.swift; sourceTree = "<group>"; };
 		FB608E6E1D2EBB9F002DADE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB608E7C1D2EBBAA002DADE2 /* Component.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Component.swift; sourceTree = "<group>"; };
+		FB608E7E1D2EBBAA002DADE2 /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		FB608E7F1D2EBBAA002DADE2 /* UILabelExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
+		FB608E801D2EBBAA002DADE2 /* UIScrollViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollViewExtension.swift; sourceTree = "<group>"; };
+		FB608E811D2EBBAA002DADE2 /* UIViewEXtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewEXtension.swift; sourceTree = "<group>"; };
+		FB608E821D2EBBAA002DADE2 /* Footer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Footer.swift; sourceTree = "<group>"; };
+		FB608E831D2EBBAA002DADE2 /* Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
+		FB608E841D2EBBAA002DADE2 /* XPRefresh.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = XPRefresh.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +93,7 @@
 		FB608E401D2EBB9F002DADE2 = {
 			isa = PBXGroup;
 			children = (
+				FB608E7A1D2EBBAA002DADE2 /* XPRefresh */,
 				FB608E4B1D2EBB9F002DADE2 /* XPRefreshExample */,
 				FB608E601D2EBB9F002DADE2 /* XPRefreshExampleTests */,
 				FB608E6B1D2EBB9F002DADE2 /* XPRefreshExampleUITests */,
@@ -123,6 +140,37 @@
 				FB608E6E1D2EBB9F002DADE2 /* Info.plist */,
 			);
 			path = XPRefreshExampleUITests;
+			sourceTree = "<group>";
+		};
+		FB608E7A1D2EBBAA002DADE2 /* XPRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				FB608E7B1D2EBBAA002DADE2 /* XPRefresh */,
+				FB608E841D2EBBAA002DADE2 /* XPRefresh.bundle */,
+			);
+			path = XPRefresh;
+			sourceTree = "<group>";
+		};
+		FB608E7B1D2EBBAA002DADE2 /* XPRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				FB608E7C1D2EBBAA002DADE2 /* Component.swift */,
+				FB608E7D1D2EBBAA002DADE2 /* EXtension */,
+				FB608E821D2EBBAA002DADE2 /* Footer.swift */,
+				FB608E831D2EBBAA002DADE2 /* Header.swift */,
+			);
+			path = XPRefresh;
+			sourceTree = "<group>";
+		};
+		FB608E7D1D2EBBAA002DADE2 /* EXtension */ = {
+			isa = PBXGroup;
+			children = (
+				FB608E7E1D2EBBAA002DADE2 /* StringExtension.swift */,
+				FB608E7F1D2EBBAA002DADE2 /* UILabelExtension.swift */,
+				FB608E801D2EBBAA002DADE2 /* UIScrollViewExtension.swift */,
+				FB608E811D2EBBAA002DADE2 /* UIViewEXtension.swift */,
+			);
+			path = EXtension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,6 +280,7 @@
 				FB608E571D2EBB9F002DADE2 /* LaunchScreen.storyboard in Resources */,
 				FB608E541D2EBB9F002DADE2 /* Assets.xcassets in Resources */,
 				FB608E521D2EBB9F002DADE2 /* Main.storyboard in Resources */,
+				FB608E8C1D2EBBAA002DADE2 /* XPRefresh.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,8 +305,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB608E861D2EBBAA002DADE2 /* StringExtension.swift in Sources */,
+				FB608E8B1D2EBBAA002DADE2 /* Header.swift in Sources */,
 				FB608E4F1D2EBB9F002DADE2 /* ViewController.swift in Sources */,
+				FB608E871D2EBBAA002DADE2 /* UILabelExtension.swift in Sources */,
+				FB608E851D2EBBAA002DADE2 /* Component.swift in Sources */,
+				FB608E891D2EBBAA002DADE2 /* UIViewEXtension.swift in Sources */,
 				FB608E4D1D2EBB9F002DADE2 /* AppDelegate.swift in Sources */,
+				FB608E8A1D2EBBAA002DADE2 /* Footer.swift in Sources */,
+				FB608E881D2EBBAA002DADE2 /* UIScrollViewExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
