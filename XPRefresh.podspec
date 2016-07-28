@@ -11,4 +11,5 @@ Pod::Spec.new do |s|
   s.source_files = "XPRefresh/**/*.swift"
   s.resource     = "XPRefresh/XPRefresh.bundle"
   s.requires_arc = true
+
 end
