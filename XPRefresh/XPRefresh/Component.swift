@@ -40,6 +40,7 @@ func xp_arrowImage() -> UIImage {
     return UIImage.init(contentsOfFile: xp_refreshBundle().pathForResource("arrow@2x", ofType: "png")!)!
 }
 
+
 // MAKR 创建一个Label
 public func creatLabelWithTitle(title: String) -> UILabel {
     let label = UILabel()
