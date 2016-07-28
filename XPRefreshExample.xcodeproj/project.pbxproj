@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB19CFF81D4A5C000092ABB9 /* XPRefresh.podspec in Resources */ = {isa = PBXBuildFile; fileRef = FB19CFF71D4A5C000092ABB9 /* XPRefresh.podspec */; };
 		FB608E4D1D2EBB9F002DADE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E4C1D2EBB9F002DADE2 /* AppDelegate.swift */; };
 		FB608E4F1D2EBB9F002DADE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB608E4E1D2EBB9F002DADE2 /* ViewController.swift */; };
 		FB608E521D2EBB9F002DADE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB608E501D2EBB9F002DADE2 /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FB19CFF71D4A5C000092ABB9 /* XPRefresh.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XPRefresh.podspec; sourceTree = "<group>"; };
 		FB608E491D2EBB9F002DADE2 /* XPRefreshExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPRefreshExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB608E4C1D2EBB9F002DADE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FB608E4E1D2EBB9F002DADE2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 		FB608E401D2EBB9F002DADE2 = {
 			isa = PBXGroup;
 			children = (
+				FB19CFF71D4A5C000092ABB9 /* XPRefresh.podspec */,
 				FB608E7A1D2EBBAA002DADE2 /* XPRefresh */,
 				FB608E4B1D2EBB9F002DADE2 /* XPRefreshExample */,
 				FB608E601D2EBB9F002DADE2 /* XPRefreshExampleTests */,
@@ -281,6 +284,7 @@
 				FB608E541D2EBB9F002DADE2 /* Assets.xcassets in Resources */,
 				FB608E521D2EBB9F002DADE2 /* Main.storyboard in Resources */,
 				FB608E8C1D2EBBAA002DADE2 /* XPRefresh.bundle in Resources */,
+				FB19CFF81D4A5C000092ABB9 /* XPRefresh.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +544,7 @@
 				FB608E731D2EBB9F002DADE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FB608E741D2EBB9F002DADE2 /* Build configuration list for PBXNativeTarget "XPRefreshExampleTests" */ = {
 			isa = XCConfigurationList;
@@ -548,6 +553,7 @@
 				FB608E761D2EBB9F002DADE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FB608E771D2EBB9F002DADE2 /* Build configuration list for PBXNativeTarget "XPRefreshExampleUITests" */ = {
 			isa = XCConfigurationList;
@@ -556,6 +562,7 @@
 				FB608E791D2EBB9F002DADE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
