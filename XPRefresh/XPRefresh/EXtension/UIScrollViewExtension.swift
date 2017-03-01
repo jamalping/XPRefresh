@@ -94,6 +94,10 @@ extension UIScrollView {
         }
     }
     
+    public func endRefresh() {
+        self.xp_header?.endRefresh()
+        self.xp_footer?.endRefresh()
+    }
 }
 
 // TableView CollectionView 加载数据时的协议，
