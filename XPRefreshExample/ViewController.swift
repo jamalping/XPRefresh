@@ -21,13 +21,13 @@ class ViewController: UIViewController,UITableViewDataSource {
         tableView.dataSource = self
         tableView.xp_header = Header.init {
             print("正在刷新")
-            self.performSelector(#selector(ViewController.test), withObject: nil, afterDelay: 2)
+            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
         }
         
         tableView.xp_footer = Footer.init{
             print("上拉正在刷新")
             self.numbers+=5
-            self.performSelector(#selector(ViewController.test), withObject: nil, afterDelay: 2)
+            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
         }
     }
     
@@ -43,15 +43,15 @@ class ViewController: UIViewController,UITableViewDataSource {
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return numbers
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let ii = "dsdf"
-        var cell = tableView.dequeueReusableCellWithIdentifier(ii)
+        var cell = tableView.dequeueReusableCell(withIdentifier: ii)
         if cell == nil {
-            cell = UITableViewCell.init(style: .Default, reuseIdentifier: ii)
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: ii)
         }
         cell?.textLabel?.text = "\(indexPath.row)"
         return cell!

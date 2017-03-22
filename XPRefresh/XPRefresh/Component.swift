@@ -10,7 +10,7 @@ import UIKit
 
 let HeaderHeight: CGFloat = 54.0
 let FooterHeight: CGFloat = 44.0;
-let AnimationDuration:NSTimeInterval = 0.35;
+let AnimationDuration:TimeInterval = 0.35;
 
 /** 观察者监听的属性 */
 let KeyPathContentOffset = "contentOffset"
@@ -31,30 +31,30 @@ let BackFooterNoMoreDataText = "已经全部加载完毕"
 let LastUpdatedTimeKey = "lastUpdatedTimeKey"
 
 // 获取XPRefresh资源包
-func xp_refreshBundle() -> NSBundle {
-    return NSBundle.init(path: NSBundle.init(forClass: Component.self).pathForResource("XPRefresh", ofType: "bundle")!)!
+func xp_refreshBundle() -> Bundle {
+    return Bundle.init(path: Bundle.init(for: Component.self).path(forResource: "XPRefresh", ofType: "bundle")!)!
 }
 
 // MARK 获取下拉刷新的图
 func xp_arrowImage() -> UIImage {
-    return UIImage.init(contentsOfFile: xp_refreshBundle().pathForResource("arrow@2x", ofType: "png")!)!
+    return UIImage.init(contentsOfFile: xp_refreshBundle().path(forResource: "arrow@2x", ofType: "png")!)!
 }
 
 
 // MAKR 创建一个Label
-public func creatLabelWithTitle(title: String) -> UILabel {
+public func creatLabelWithTitle(_ title: String) -> UILabel {
     let label = UILabel()
-    label.font = UIFont.boldSystemFontOfSize(14)
+    label.font = UIFont.boldSystemFont(ofSize: 14)
     label.textColor = UIColor(red: 90/255.0, green: 90/255.0, blue: 90/255.0, alpha: 1)
     label.text = title
-    label.autoresizingMask = .FlexibleWidth
-    label.textAlignment = .Center
-    label.backgroundColor = UIColor.clearColor()
+    label.autoresizingMask = .flexibleWidth
+    label.textAlignment = .center
+    label.backgroundColor = UIColor.clear
     return label
 }
 
 // MAKR 创建一个菊花
-public func creatIndicatorViewWithStyle(style: UIActivityIndicatorViewStyle = .Gray) -> UIActivityIndicatorView {
+public func creatIndicatorViewWithStyle(_ style: UIActivityIndicatorViewStyle = .gray) -> UIActivityIndicatorView {
     let indicatorView = UIActivityIndicatorView.init(activityIndicatorStyle: style)
     indicatorView.hidesWhenStopped = true
     return indicatorView
@@ -63,14 +63,14 @@ public func creatIndicatorViewWithStyle(style: UIActivityIndicatorViewStyle = .G
 // MAKR 获取上次刷新的时间
 public func getLastUpdateTime() -> String {
     var result: String
-    let lastUpdateTime: NSDate? = NSUserDefaults.standardUserDefaults().objectForKey(LastUpdatedTimeKey) as? NSDate
+    let lastUpdateTime: Date? = UserDefaults.standard.object(forKey: LastUpdatedTimeKey) as? Date
     if let lastTime = lastUpdateTime {
         let calendar = currentCalendar
-        let unitFlags: NSCalendarUnit = [.Year, .Month, .Day, .Hour, .Minute, .Nanosecond]
-        let cmp1 = calendar.components(unitFlags, fromDate: lastTime)
-        let cmp2 = calendar.components(unitFlags, fromDate: NSDate())
+        let unitFlags: NSCalendar.Unit = [.year, .month, .day, .hour, .minute, .nanosecond]
+        let cmp1 = (calendar as NSCalendar).components(unitFlags, from: lastTime)
+        let cmp2 = (calendar as NSCalendar).components(unitFlags, from: Date())
         // 2.格式化日期
-        let formatter = NSDateFormatter()
+        let formatter = DateFormatter()
         var isToday = false
         if cmp1.day == cmp2.day {
             formatter.dateFormat = "HH:mm"
@@ -80,49 +80,49 @@ public func getLastUpdateTime() -> String {
         }else {
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
         }
-        let time = formatter.stringFromDate(lastTime)
+        let time = formatter.string(from: lastTime)
         
         result = "最后刷新  " + (isToday ? "今天" + time : time)
     }else {
         result = "最后刷新: 无记录"
     }
-    let userDefault = NSUserDefaults.standardUserDefaults()
-    userDefault.setObject(NSDate(), forKey: LastUpdatedTimeKey)
+    let userDefault = UserDefaults.standard
+    userDefault.set(Date(), forKey: LastUpdatedTimeKey)
     userDefault.synchronize()
     return result
 }
 
 // MAKR 获取当前日历
-var currentCalendar: NSCalendar {
+var currentCalendar: Calendar {
     get {
-        let calender: NSCalendar? = NSCalendar.init(calendarIdentifier: NSCalendarIdentifierGregorian)
+        let calender: Calendar? = Calendar.init(identifier: Calendar.Identifier.gregorian)
         if let c = calender {
             return c
         }
-        return NSCalendar.currentCalendar()
+        return Calendar.current
     }
 }
 
 /// 刷新控件状态
 public enum State {
-    case Normal
-    case Pull
-    case WillRefresh
-    case Refreshing
-    case NoMoreData
+    case normal
+    case pull
+    case willRefresh
+    case refreshing
+    case noMoreData
     
 }
 
-public class Component: UIView {
+open class Component: UIView {
     
     public typealias CallBack = () -> ()
     
     /** 记录scrollView刚开始的inset */
-    var _scrollViewOriginalInset: UIEdgeInsets = UIEdgeInsetsZero
+    var _scrollViewOriginalInset: UIEdgeInsets = UIEdgeInsets.zero
     /** 父控件 */
     weak var _scrollView: UIScrollView!
     
-    var _state = State.Normal
+    var _state = State.normal
     
     /// 刷新回调
     var BeginRefreshingCallBack: CallBack?
@@ -139,8 +139,8 @@ public class Component: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override public func willMoveToSuperview(newSuperview: UIView?) {
-        super.willMoveToSuperview(newSuperview)
+    override open func willMove(toSuperview newSuperview: UIView?) {
+        super.willMove(toSuperview: newSuperview)
         // 如果不是scorllView，不做任何处理
         guard let scrollView = newSuperview as? UIScrollView else {
             return
@@ -162,7 +162,7 @@ public class Component: UIView {
 
 extension Component {
     public func endRefresh() {
-        self._state = .Normal
+        self._state = .normal
     }
 }
 

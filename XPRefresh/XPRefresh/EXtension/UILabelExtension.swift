@@ -15,7 +15,7 @@ extension UILabel {
             let size = CGSize.init(width: CGFloat(MAXFLOAT), height: CGFloat(MAXFLOAT))
             guard let text = self.text else { return 0 }
             if text.length > 0 {
-                stringWidth = text.boundingRectWithSize(size, options: .UsesLineFragmentOrigin, attributes: [NSFontAttributeName : self.font], context: nil).width
+                stringWidth = text.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName : self.font], context: nil).width
             }
             return stringWidth
         }

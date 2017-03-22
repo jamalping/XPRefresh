@@ -54,11 +54,11 @@ extension UIScrollView {
         set {
             if xp_header != newValue {
                 xp_header?.removeFromSuperview()
-                self.insertSubview(newValue!, atIndex: 0)
+                self.insertSubview(newValue!, at: 0)
                 
-                self.willChangeValueForKey("xp_header")
+                self.willChangeValue(forKey: "xp_header")
                 objc_setAssociatedObject(self, &HeaderKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
-                self.didChangeValueForKey("xp_header")
+                self.didChangeValue(forKey: "xp_header")
             }
         }
         get { return objc_getAssociatedObject(self, &HeaderKey) as? Header }
@@ -69,10 +69,10 @@ extension UIScrollView {
             if xp_footer != newValue {
                 xp_footer?.removeFromSuperview()
             }
-            self.insertSubview(newValue!, atIndex: 0)
-            self.willChangeValueForKey("xp_footer")
+            self.insertSubview(newValue!, at: 0)
+            self.willChangeValue(forKey: "xp_footer")
             objc_setAssociatedObject(self, &FooterKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
-            self.didChangeValueForKey("xp_footer")
+            self.didChangeValue(forKey: "xp_footer")
         }
         get { return objc_getAssociatedObject(self, &FooterKey) as? Footer }
     }
@@ -83,11 +83,11 @@ extension UIScrollView {
             var result = 0
             if let tableView = self as? UITableView {
                 for section in 0 ..< tableView.numberOfSections {
-                    result += tableView.numberOfRowsInSection(section)
+                    result += tableView.numberOfRows(inSection: section)
                 }
             }else if let collectionView = self as? UICollectionView {
-                for section in 0 ..< collectionView.numberOfSections() {
-                    result += collectionView.numberOfItemsInSection(section)
+                for section in 0 ..< collectionView.numberOfSections {
+                    result += collectionView.numberOfItems(inSection: section)
                 }
             }
             return result
@@ -102,7 +102,7 @@ extension UIScrollView {
 
 // TableView CollectionView 加载数据时的协议，
 protocol LoadDataProtocol {
-    func loadDataCallBack(totalCount: Int) -> Void
+    func loadDataCallBack(_ totalCount: Int) -> Void
 }
 
 extension UITableView {
@@ -113,16 +113,17 @@ extension UITableView {
         }
     }
     
-    public override class func initialize() {
+    open override class func initialize() {
         struct Static {
-            static var token: dispatch_once_t = 0
+            static var token: Int = 0
         }
         
         // make sure this isn't a subclass
         if self !== UITableView.self {
             return
         }
-        dispatch_once(&Static.token) {
+        if Static.token == 0 {
+            
             let originalSelector = #selector(UITableView.reloadData)
             let swizzledSelector = #selector(UITableView.xp_loadData)
             
@@ -136,6 +137,7 @@ extension UITableView {
             } else {
                 method_exchangeImplementations(originalMethod, swizzledMethod);
             }
+            Static.token += 1
         }
     }
 }
@@ -148,16 +150,16 @@ extension UICollectionView {
         }
     }
     
-    public override class func initialize() {
+    open override class func initialize() {
         struct Static {
-            static var token: dispatch_once_t = 0
+            static var token: Int = 0
         }
         
         // make sure this isn't a subclass
         if self !== UICollectionView.self {
             return
         }
-        dispatch_once(&Static.token) {
+        if Static.token == 0 {
             let originalSelector = #selector(UICollectionView.reloadData)
             let swizzledSelector = #selector(UICollectionView.xp_loadData)
             
@@ -171,6 +173,7 @@ extension UICollectionView {
             } else {
                 method_exchangeImplementations(originalMethod, swizzledMethod);
             }
+            Static.token += 1
         }
     }
 }

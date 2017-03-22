@@ -7,8 +7,32 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
 
-public class Footer: Component,LoadDataProtocol {
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
+
+open class Footer: Component,LoadDataProtocol {
     
     // 是否自动隐藏。
     var automaticallyHidden = true
@@ -23,8 +47,8 @@ public class Footer: Component,LoadDataProtocol {
             }
             xp_footerStateLabel.state = _state
             switch _state {
-            case .Refreshing:
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC/2)), dispatch_get_main_queue(), {
+            case .refreshing:
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(NSEC_PER_SEC/2)) / Double(NSEC_PER_SEC), execute: {
                     if let BeginRefreshingCallBack = self.BeginRefreshingCallBack {
                         BeginRefreshingCallBack()
                     }
@@ -32,8 +56,8 @@ public class Footer: Component,LoadDataProtocol {
                         RefreshingCallBack()
                     }
                 })
-            case .Normal, .NoMoreData:
-                if oldValue == .Refreshing {
+            case .normal, .noMoreData:
+                if oldValue == .refreshing {
                     if let XPEndreshingCallBack = self.EndreshingCallBack {
                         XPEndreshingCallBack()
                     }
@@ -45,8 +69,8 @@ public class Footer: Component,LoadDataProtocol {
     }
     
     
-    public init(_ refreshAction: CallBack) {
-        super.init(frame: CGRectZero)
+    public init(_ refreshAction: @escaping CallBack) {
+        super.init(frame: CGRect.zero)
         self.RefreshingCallBack = refreshAction
         self.height = FooterHeight
         
@@ -61,53 +85,53 @@ public class Footer: Component,LoadDataProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         xp_footerStateLabel.frame = self.bounds
     }
     
-    override public func willMoveToSuperview(newSuperview: UIView?) {
-        super.willMoveToSuperview(newSuperview)
+    override open func willMove(toSuperview newSuperview: UIView?) {
+        super.willMove(toSuperview: newSuperview)
         
         if let _ = newSuperview {
-            if !self.hidden {
+            if !self.isHidden {
                 self._scrollView.contentInsetBottom += self.height
             }
             self.top = self._scrollView.contentHeight
         }else { // 被移除了
-            if !self.hidden {
+            if !self.isHidden {
                 self._scrollView.contentInsetBottom -= self.height
             }
         }
     }
     
     // 实现协议
-    func loadDataCallBack(totalCount: Int) {
+    func loadDataCallBack(_ totalCount: Int) {
         if automaticallyHidden {
-            self.hidden = totalCount == 0
+            self.isHidden = totalCount == 0
         }
     }
     
-    override public var hidden: Bool {
+    override open var isHidden: Bool {
         set {
-            super.hidden = newValue
-            if !hidden && newValue {
-                self._state = .Normal
+            super.isHidden = newValue
+            if !isHidden && newValue {
+                self._state = .normal
                 self._scrollView.contentInsetBottom -= self.height
-            }else if hidden && !newValue {
+            }else if isHidden && !newValue {
                 self._scrollView.contentInsetBottom += self.height
                 self.top = self._scrollView.contentHeight
             }
         }
-        get { return super.hidden }
+        get { return super.isHidden }
     }
     
     /// MARK 观察者
     override func addObservers() {
         super.addObservers()
         guard let scrollView = self._scrollView else { return }
-        scrollView.addObserver(self, forKeyPath: KeyPathContentOffset, options: [.New, .Old], context: nil)
-        scrollView.addObserver(self, forKeyPath: KeyPathContentSize, options: [.New, .Old], context: nil)
+        scrollView.addObserver(self, forKeyPath: KeyPathContentOffset, options: [.new, .old], context: nil)
+        scrollView.addObserver(self, forKeyPath: KeyPathContentSize, options: [.new, .old], context: nil)
     }
     
     override func removeObservers() {
@@ -117,14 +141,14 @@ public class Footer: Component,LoadDataProtocol {
         scrollView.removeObserver(self, forKeyPath: KeyPathContentSize)
     }
     
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard self.userInteractionEnabled else { return }
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard self.isUserInteractionEnabled else { return }
         
         if keyPath == KeyPathContentSize {
             scrollViewContentSizeDidChange()
         }
         
-        guard !self.hidden else { return }
+        guard !self.isHidden else { return }
         
         if keyPath == KeyPathContentOffset {
             scrollViewContentOffsetDidChange(change)
@@ -135,27 +159,31 @@ public class Footer: Component,LoadDataProtocol {
         self.top = self._scrollView.contentHeight
     }
     
-    func scrollViewContentOffsetDidChange(change: [String: AnyObject]?) {
-        if self._state != .Normal || !self.automaticallyHidden || self.top == 0 {
+    func scrollViewContentOffsetDidChange(_ change: [NSKeyValueChangeKey: Any]?) {
+        if self._state != .normal || !self.automaticallyHidden || self.top == 0 {
             return
         }
         if (_scrollView.contentInsetTop + _scrollView.contentHeight > _scrollView.height) { // 内容超过一个屏幕
             if (_scrollView.contentOffsetY >= _scrollView.contentHeight - _scrollView.height + self.height + _scrollView.contentInsetBottom - self.height) {
                 // 防止手松开时连续调用
-                let old = change!["old"]?.CGPointValue()
-                let new = change!["new"]?.CGPointValue()
-                if new?.y <= old?.y { return }
+                guard let oldPoint = change?[.oldKey] as? CGPoint else {
+                    return
+                }
+                guard let newPoint = change?[.newKey] as? CGPoint else {
+                    return
+                }
+                if newPoint.y <= oldPoint.y { return }
                 // 当底部刷新控件完全出现时，才刷新
-                UIView.animateWithDuration(AnimationDuration, animations: {
+                UIView.animate(withDuration: AnimationDuration, animations: {
                     self.alpha = 1.0
                 })
                 // 只要正在刷新，就完全显示
                 if self.window != nil {
-                    self._state = .Refreshing;
+                    self._state = .refreshing;
                 } else {
                     // 预发当前正在刷新中时调用本方法使得header insert回置失败
-                    if self._state != .Refreshing {
-                        self._state = .WillRefresh;
+                    if self._state != .refreshing {
+                        self._state = .willRefresh;
                     }
                 }
                 
@@ -173,23 +201,23 @@ class XPFooterStateLabel: UILabel {
     
     let stateTitles: [State: String] = {
         var result = [State: String]()
-        result.updateValue(BackFooterNomalText, forKey: .Normal)
-        result.updateValue(BackFooterRefreshingText, forKey: .Refreshing)
-        result.updateValue(BackFooterNoMoreDataText, forKey: .NoMoreData)
+        result.updateValue(BackFooterNomalText, forKey: .normal)
+        result.updateValue(BackFooterRefreshingText, forKey: .refreshing)
+        result.updateValue(BackFooterNoMoreDataText, forKey: .noMoreData)
         return result
     }()
     
-    var state: State = .Normal {
+    var state: State = .normal {
         didSet {
             guard oldValue != state else { return }
             switch state {
-            case .Refreshing:
+            case .refreshing:
                 self.loadingView.startAnimating()
                 if refreshingTitleHidden {
                     self.stataLable.text = nil
                 }
                 self.stataLable.text = stateTitles[state]
-            case .Normal, .NoMoreData:
+            case .normal, .noMoreData:
                 self.loadingView.stopAnimating()
                 self.stataLable.text = stateTitles[state]
             default: break

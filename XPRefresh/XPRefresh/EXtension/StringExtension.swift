@@ -13,11 +13,11 @@ extension String {
         get { return self.characters.count }
     }
     
-    func textWidth(font: UIFont) -> CGFloat {
+    func textWidth(_ font: UIFont) -> CGFloat {
         var stringWidth: CGFloat = 0
         let size = CGSize.init(width: CGFloat(MAXFLOAT), height: CGFloat(MAXFLOAT))
         if self.length > 0 {
-            stringWidth = self.boundingRectWithSize(size, options: .UsesLineFragmentOrigin, attributes: [NSFontAttributeName : font], context: nil).width
+            stringWidth = self.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName : font], context: nil).width
         }
         return stringWidth
     }
