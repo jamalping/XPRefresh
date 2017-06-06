@@ -7,7 +7,7 @@
 //
 
 import UIKit
-// MARK ---测试分支合并到主干
+
 let HeaderHeight: CGFloat = 54.0
 let FooterHeight: CGFloat = 44.0;
 let AnimationDuration:TimeInterval = 0.35;
