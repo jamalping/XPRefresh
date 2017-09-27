@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "XPRefresh"
-  s.version      = "0.0.4"
+  s.version      = "0.0.5"
   s.summary      = "Swift版刷新控件."
   s.homepage     = "https://github.com/jamalping/XPRefresh"
   s.license      = 'MIT'
