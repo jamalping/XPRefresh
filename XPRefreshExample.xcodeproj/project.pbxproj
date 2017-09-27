@@ -491,7 +491,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = cisc.com.XPRefreshExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -505,7 +505,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = cisc.com.XPRefreshExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
