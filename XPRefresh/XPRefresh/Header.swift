@@ -11,26 +11,28 @@ import UIKit
 /// 下拉控件：监听用户下拉状态
 open class Header: Component {
     
-    fileprivate var insetTopDelta: CGFloat = 0
+    /// 顶部的偏移量
+    fileprivate var insetTop: CGFloat = 0
     
+    /// 刷新显示的文字label
     fileprivate let xp_headerStateLabel = XPHeaderStateLabel()
     
     // 重写_state
-    override var _state: State {
+    override var state: RefreshState {
         didSet {
-            guard _state != oldValue else {
+            guard state != oldValue else {
                 return
             }
-            xp_headerStateLabel.state = _state
+            xp_headerStateLabel.state = state
             
-            switch _state {
+            switch state {
             case .normal:
                 if oldValue != .refreshing { return }
                 // 恢复inset和offset
                 UIView.animate(withDuration: AnimationDuration, animations: {
-                    self._scrollView.contentInsetTop += self.insetTopDelta
+                    self._scrollView.contentInsetTop += self.insetTop
                     }, completion: { (finished) in
-                        if let EndreshingCallBack = self.EndreshingCallBack {
+                        if let EndreshingCallBack = self.endreshingCallBack {
                             EndreshingCallBack()
                         }
                 })
@@ -41,17 +43,17 @@ open class Header: Component {
             case .refreshing:
                 DispatchQueue.main.async(execute: {
                     UIView.animate(withDuration: AnimationDuration, animations: {
-                        let top = self._scrollViewOriginalInset.top + self.height
+                        let top = self.scrollViewOriginalInset.top + self.height
                         self._scrollView.contentInsetTop = top
                         self._scrollView.contentOffset = CGPoint.init(x: 0, y: -top)
                         }, completion: { (finished) in
                             // 刷新回调
                             DispatchQueue.main.async(execute: {
-                                if let BeginRefreshingCallBack = self.BeginRefreshingCallBack {
-                                    BeginRefreshingCallBack()
+                                if let beginRefreshingCallBack = self.beginRefreshingCallBack {
+                                    beginRefreshingCallBack()
                                 }
-                                if let RefreshingCallBack = self.RefreshingCallBack {
-                                    RefreshingCallBack()
+                                if let refreshingCallBack = self.refreshingCallBack {
+                                    refreshingCallBack()
                                 }
                             })
                     })
@@ -60,10 +62,10 @@ open class Header: Component {
             }
         }
     }
-    /// init
-    public init(_ refreshAction: @escaping CallBack) {
+    /// 初始化方法
+    public init(_ refreshAction: @escaping callBack) {
         super.init(frame: CGRect.zero)
-        self.RefreshingCallBack = refreshAction
+        self.refreshingCallBack = refreshAction
         
         self.addSubview(self.xp_headerStateLabel)
         
@@ -80,12 +82,14 @@ open class Header: Component {
     }
     
     
+    /// 添加观察者
     override func addObservers() {
         super.addObservers()
         guard let scrollView = self._scrollView else { return }
         scrollView.addObserver(self, forKeyPath: KeyPathContentOffset, options: [.new, .old], context: nil)
     }
     
+    /// 移除观察者
     override func removeObservers() {
         super.removeObservers()
         guard let scrollView = self._scrollView else { return }
@@ -105,62 +109,72 @@ open class Header: Component {
     }
     
     func scrollViewContentOffsetDidchange(_ change:[NSKeyValueChangeKey: Any]?) {
-        if self._state == .refreshing {
+        if self.state == .refreshing {
             guard let _ = self.window else { return }
             // seactionHeader停留解决
-            var insetTop = -self._scrollView.contentOffsetY > _scrollViewOriginalInset.top ?  -self._scrollView.contentOffsetY : _scrollViewOriginalInset.top
-            insetTop = (insetTop > self.height + _scrollViewOriginalInset.top) ? self.height + _scrollViewOriginalInset.top : insetTop
+            var insetTop = -self._scrollView.contentOffsetY > scrollViewOriginalInset.top ?  -self._scrollView.contentOffsetY : scrollViewOriginalInset.top
+            insetTop = (insetTop > self.height + scrollViewOriginalInset.top) ? self.height + scrollViewOriginalInset.top : insetTop
             self._scrollView.contentInsetTop = insetTop;
             
-            self.insetTopDelta = _scrollViewOriginalInset.top - insetTop;
+            self.insetTop = scrollViewOriginalInset.top - insetTop;
             return
         }
         
-        _scrollViewOriginalInset = _scrollView.contentInset
+        scrollViewOriginalInset = _scrollView.contentInset
         
         // 当前的contentOffset
         let offsetY = self._scrollView.contentOffsetY
         // 头部空间刚好出现的offset
-        let happenOffsetTop = -_scrollViewOriginalInset.top
+        let happenOffsetTop = -scrollViewOriginalInset.top
         // 看不见头部控件，直接返回.
         if offsetY > happenOffsetTop { return }
         
         let normalpullingOffsetY = happenOffsetTop - self.height
         if _scrollView.isDragging {
-            if self._state == .normal && offsetY < normalpullingOffsetY {
-                self._state = .pull
-            }else if self._state == .pull && offsetY > normalpullingOffsetY {
-                self._state = .normal
+            if self.state == .normal && offsetY < normalpullingOffsetY {
+                self.state = .pull
+            }else if self.state == .pull && offsetY > normalpullingOffsetY {
+                self.state = .normal
             }
-        }else if self._state == .pull {
-            self._state = .refreshing
+        }else if self.state == .pull {
+            self.state = .refreshing
         }
     }
 }
 
 
+// MARK: --- 下拉刷新显示文字的label
 class XPHeaderStateLabel: UILabel {
     
-    fileprivate let stateLabel = creatLabelWithTitle(HeaderNomalText)
-    fileprivate let lastUpdatedLabel = creatLabelWithTitle(getLastUpdateTime())
+    /// 刷新文字
+    fileprivate let stateLabel = UILabel.init(HeaderNomalText)
+
+    /// 上次刷新的时间
+    fileprivate let lastUpdatedLabel = UILabel.init(getLastUpdateTime())
+
+    /// 下拉箭头
     fileprivate let arrowView: UIImageView = {
         let imageView = UIImageView.init(image: xp_arrowImage())
         return imageView
     }()
+    
+    /// 菊花
     fileprivate let loadingView: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView.init(activityIndicatorStyle: .gray)
         return view
     }()
     
-    fileprivate var statesTitles: [State: String] = {
-        var result = [State: String]()
+    /// 获取不同状态的刷新文字
+    fileprivate var statesTitles: [RefreshState: String] = {
+        var result = [RefreshState: String]()
         result.updateValue(HeaderNomalText, forKey: .normal)
         result.updateValue(HeaderPullingText, forKey: .pull)
         result.updateValue(HeaderRefreshingText, forKey: .refreshing)
         return result
     }()
     
-    fileprivate var state: State = .normal {
+    /// 刷新状态
+    fileprivate var state: RefreshState = .normal {
         didSet {
             guard oldValue != state else { return }
             self.stateLabel.text = self.statesTitles[state]
@@ -170,7 +184,10 @@ class XPHeaderStateLabel: UILabel {
         }
     }
     
-    fileprivate func setArrowViewWithState(_ oldState: State) {
+    /// 根据刷新状态设置菊花状态
+    ///
+    /// - Parameter oldState: 之前的状态
+    fileprivate func setArrowViewWithState(_ oldState: RefreshState) {
         switch state {
         case .normal:
             if oldState == .refreshing {
@@ -194,7 +211,8 @@ class XPHeaderStateLabel: UILabel {
             self.loadingView.stopAnimating()
             self.arrowView.isHidden = false
             UIView.animate(withDuration: AnimationDuration, animations: {
-                self.arrowView.transform = CGAffineTransform(rotationAngle: 0.000001 - CGFloat(M_PI))
+                self.arrowView.transform = CGAffineTransform(rotationAngle: 0.000001 - CGFloat(Double.pi))
+                
             })
         case .refreshing:
             self.loadingView.alpha = 1
@@ -205,6 +223,7 @@ class XPHeaderStateLabel: UILabel {
         }
     }
     
+    /// 初始化
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addSubview(stateLabel)
@@ -217,6 +236,8 @@ class XPHeaderStateLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    /// 布局
     override func layoutSubviews() {
         if self.stateLabel.isHidden { return }
         

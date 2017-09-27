@@ -17,7 +17,8 @@ extension String {
         var stringWidth: CGFloat = 0
         let size = CGSize.init(width: CGFloat(MAXFLOAT), height: CGFloat(MAXFLOAT))
         if self.length > 0 {
-            stringWidth = self.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName : font], context: nil).width
+            stringWidth = self.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes:
+                [NSFontAttributeName : font], context: nil).width
         }
         return stringWidth
     }

@@ -7,58 +7,33 @@
 //
 
 import UIKit
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
 
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l <= r
-  default:
-    return !(rhs < lhs)
-  }
-}
-
-
-open class Footer: Component,LoadDataProtocol {
-    
-    // 是否自动隐藏。
-    var automaticallyHidden = true
-    
+/// 上拉刷新控件
+open class Footer: Component {
+    /// 刷新显示的文字label
     let xp_footerStateLabel = XPFooterStateLabel()
     
-    override var _state: State  {
+    /// 当前状态
+    override var state: RefreshState  {
         didSet {
             print(self._scrollView.contentSize,self._scrollView.contentInsetBottom)
-            guard _state != oldValue else {
+            guard state != oldValue else {
                 return
             }
-            xp_footerStateLabel.state = _state
-            switch _state {
+            xp_footerStateLabel.state = state
+            switch state {
             case .refreshing:
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(NSEC_PER_SEC/2)) / Double(NSEC_PER_SEC), execute: {
-                    if let BeginRefreshingCallBack = self.BeginRefreshingCallBack {
-                        BeginRefreshingCallBack()
+                    if let beginRefreshingCallBack = self.beginRefreshingCallBack {
+                        beginRefreshingCallBack()
                     }
-                    if let RefreshingCallBack = self.RefreshingCallBack {
+                    if let RefreshingCallBack = self.refreshingCallBack {
                         RefreshingCallBack()
                     }
                 })
             case .normal, .noMoreData:
                 if oldValue == .refreshing {
-                    if let XPEndreshingCallBack = self.EndreshingCallBack {
+                    if let XPEndreshingCallBack = self.endreshingCallBack {
                         XPEndreshingCallBack()
                     }
                 }
@@ -69,9 +44,12 @@ open class Footer: Component,LoadDataProtocol {
     }
     
     
-    public init(_ refreshAction: @escaping CallBack) {
+    /// 初始化方法
+    ///
+    /// - Parameter refreshAction: 刷新的回调
+    public init(_ refreshAction: @escaping callBack) {
         super.init(frame: CGRect.zero)
-        self.RefreshingCallBack = refreshAction
+        self.refreshingCallBack = refreshAction
         self.height = FooterHeight
         
         self.addSubview(xp_footerStateLabel)
@@ -105,18 +83,11 @@ open class Footer: Component,LoadDataProtocol {
         }
     }
     
-    // 实现协议
-    func loadDataCallBack(_ totalCount: Int) {
-        if automaticallyHidden {
-            self.isHidden = totalCount == 0
-        }
-    }
-    
     override open var isHidden: Bool {
         set {
             super.isHidden = newValue
             if !isHidden && newValue {
-                self._state = .normal
+                self.state = .normal
                 self._scrollView.contentInsetBottom -= self.height
             }else if isHidden && !newValue {
                 self._scrollView.contentInsetBottom += self.height
@@ -159,8 +130,10 @@ open class Footer: Component,LoadDataProtocol {
         self.top = self._scrollView.contentHeight
     }
     
+    
+    /// 监听ScrollView的滚动
     func scrollViewContentOffsetDidChange(_ change: [NSKeyValueChangeKey: Any]?) {
-        if self._state != .normal || !self.automaticallyHidden || self.top == 0 {
+        if self.state != .normal || self.top == 0 {
             return
         }
         if (_scrollView.contentInsetTop + _scrollView.contentHeight > _scrollView.height) { // 内容超过一个屏幕
@@ -179,11 +152,11 @@ open class Footer: Component,LoadDataProtocol {
                 })
                 // 只要正在刷新，就完全显示
                 if self.window != nil {
-                    self._state = .refreshing;
+                    self.state = .refreshing;
                 } else {
                     // 预发当前正在刷新中时调用本方法使得header insert回置失败
-                    if self._state != .refreshing {
-                        self._state = .willRefresh;
+                    if self.state != .refreshing {
+                        self.state = .willRefresh;
                     }
                 }
                 
@@ -193,21 +166,32 @@ open class Footer: Component,LoadDataProtocol {
 }
 
 class XPFooterStateLabel: UILabel {
-    var loadingView = creatIndicatorViewWithStyle()
     
-    var stataLable = creatLabelWithTitle(BackFooterNomalText)
+    /// 菊花
+    var loadingView: UIActivityIndicatorView = {
+        let indicatorView =
+            UIActivityIndicatorView.init(activityIndicatorStyle: .gray)
+        indicatorView.hidesWhenStopped = true
+        return indicatorView
+    }()
     
+    /// 文字
+    var stataLable = UILabel.init(BackFooterNomalText)
+    
+    /// 是否隐藏文字
     var refreshingTitleHidden = false
     
-    let stateTitles: [State: String] = {
-        var result = [State: String]()
+    /// 获取不同状态的刷新文字
+    let stateTitles: [RefreshState: String] = {
+        var result = [RefreshState: String]()
         result.updateValue(BackFooterNomalText, forKey: .normal)
         result.updateValue(BackFooterRefreshingText, forKey: .refreshing)
         result.updateValue(BackFooterNoMoreDataText, forKey: .noMoreData)
         return result
     }()
     
-    var state: State = .normal {
+    /// 刷新状态
+    var state: RefreshState = .normal {
         didSet {
             guard oldValue != state else { return }
             switch state {

@@ -47,8 +47,7 @@ extension UIScrollView {
 
 private var HeaderKey = "HeaderKey"
 private var FooterKey = "FooterKey"
-private var loadDataCallBack = "loadDataCallBack"
-// MARK -- 和刷新相关的拓展  
+// MARK: --- 拓展刷新控件
 extension UIScrollView {
     public var xp_header: Header? {
         set {
@@ -77,103 +76,8 @@ extension UIScrollView {
         get { return objc_getAssociatedObject(self, &FooterKey) as? Footer }
     }
     
-    // 获取tableView 或者 CollectionView 的row的总个数
-    public var totalDataCount: Int {
-        get {
-            var result = 0
-            if let tableView = self as? UITableView {
-                for section in 0 ..< tableView.numberOfSections {
-                    result += tableView.numberOfRows(inSection: section)
-                }
-            }else if let collectionView = self as? UICollectionView {
-                for section in 0 ..< collectionView.numberOfSections {
-                    result += collectionView.numberOfItems(inSection: section)
-                }
-            }
-            return result
-        }
-    }
-    
     public func endRefresh() {
         self.xp_header?.endRefresh()
         self.xp_footer?.endRefresh()
-    }
-}
-
-// TableView CollectionView 加载数据时的协议，
-protocol LoadDataProtocol {
-    func loadDataCallBack(_ totalCount: Int) -> Void
-}
-
-extension UITableView {
-    public func xp_loadData() {
-        self.xp_loadData()
-        if let loadDataer = self as? LoadDataProtocol {
-            loadDataer.loadDataCallBack(self.totalDataCount)
-        }
-    }
-    
-    open override class func initialize() {
-        struct Static {
-            static var token: Int = 0
-        }
-        
-        // make sure this isn't a subclass
-        if self !== UITableView.self {
-            return
-        }
-        if Static.token == 0 {
-            
-            let originalSelector = #selector(UITableView.reloadData)
-            let swizzledSelector = #selector(UITableView.xp_loadData)
-            
-            let originalMethod = class_getInstanceMethod(self, originalSelector)
-            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
-            
-            let didAddMethod = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
-            
-            if didAddMethod {
-                class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
-            } else {
-                method_exchangeImplementations(originalMethod, swizzledMethod);
-            }
-            Static.token += 1
-        }
-    }
-}
-
-extension UICollectionView {
-    public func xp_loadData() {
-        self.xp_loadData()
-        if let loadDataer = self as? LoadDataProtocol {
-            loadDataer.loadDataCallBack(self.totalDataCount)
-        }
-    }
-    
-    open override class func initialize() {
-        struct Static {
-            static var token: Int = 0
-        }
-        
-        // make sure this isn't a subclass
-        if self !== UICollectionView.self {
-            return
-        }
-        if Static.token == 0 {
-            let originalSelector = #selector(UICollectionView.reloadData)
-            let swizzledSelector = #selector(UICollectionView.xp_loadData)
-            
-            let originalMethod = class_getInstanceMethod(self, originalSelector)
-            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
-            
-            let didAddMethod = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
-            
-            if didAddMethod {
-                class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
-            } else {
-                method_exchangeImplementations(originalMethod, swizzledMethod);
-            }
-            Static.token += 1
-        }
     }
 }

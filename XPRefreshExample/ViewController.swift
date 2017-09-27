@@ -11,12 +11,14 @@ import UIKit
 class ViewController: UIViewController,UITableViewDataSource {
     
     var tableView: UITableView!
-    var numbers = 17
+    var numbers = 10
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView = UITableView.init(frame: self.view.bounds)
+        tableView.backgroundColor = .red
+        tableView.rowHeight = 100
         self.view.addSubview(tableView)
         tableView.dataSource = self
         tableView.xp_header = Header.init {
@@ -31,8 +33,7 @@ class ViewController: UIViewController,UITableViewDataSource {
         }
     }
     
-    
-    func test() -> Void {
+    @objc func test() -> Void {
         self.tableView.reloadData()
         tableView.xp_header?.endRefresh()
         tableView.xp_footer?.endRefresh()
