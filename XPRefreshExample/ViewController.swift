@@ -17,7 +17,6 @@ class ViewController: UIViewController,UITableViewDataSource {
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView = UITableView.init(frame: self.view.bounds)
-        tableView.backgroundColor = .red
         tableView.rowHeight = 100
         self.view.addSubview(tableView)
         tableView.dataSource = self

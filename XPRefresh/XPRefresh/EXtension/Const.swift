@@ -31,18 +31,19 @@ let BackFooterNoMoreDataText = "已经全部加载完毕"
 let LastUpdatedTimeKey = "lastUpdatedTimeKey"
 
 
-// 获取XPRefresh资源包
+// MARK: --- 获取XPRefresh资源包
 func xp_refreshBundle() -> Bundle {
     return Bundle.init(path: Bundle.init(for: Component.self).path(forResource: "XPRefresh", ofType: "bundle")!)!
 }
 
-// MARK 获取下拉刷新的图
+// MARK: --- 获取下拉刷新的图
 func xp_arrowImage() -> UIImage {
     return UIImage.init(contentsOfFile: xp_refreshBundle().path(forResource: "arrow@2x", ofType: "png")!)!
 }
 
 
-// MAKR 创建一个Label
+
+// MARK: --- 创建一个Label
 public func creatLabelWithTitle(_ title: String) -> UILabel {
     let label = UILabel()
     label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -54,6 +55,7 @@ public func creatLabelWithTitle(_ title: String) -> UILabel {
     return label
 }
 
+// MARK: --- UILabel初始化
 extension UILabel {
     convenience init(_ title: String?) {
         self.init()
@@ -100,7 +102,7 @@ public func getLastUpdateTime() -> String {
     return result
 }
 
-// MAKR 获取当前日历
+// MARK: --- 获取当前日历
 var currentCalendar: Calendar {
     get {
         let calender: Calendar? = Calendar.init(identifier: Calendar.Identifier.gregorian)
