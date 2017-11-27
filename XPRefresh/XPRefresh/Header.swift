@@ -9,7 +9,7 @@
 import UIKit
 
 /// 下拉控件：监听用户下拉状态
-open class Header: Component {
+public class Header: Component {
     
     /// 顶部的偏移量
     fileprivate var insetTop: CGFloat = 0
@@ -41,11 +41,16 @@ open class Header: Component {
             case .willRefresh:
                 print("将要刷新")
             case .refreshing:
+                print("正在刷新")
                 DispatchQueue.main.async(execute: {
                     UIView.animate(withDuration: AnimationDuration, animations: {
                         let top = self.scrollViewOriginalInset.top + self.height
                         self._scrollView.contentInsetTop = top
-                        self._scrollView.contentOffset = CGPoint.init(x: 0, y: -top)
+                        // 设置滚动位置
+                        var offset = self._scrollView.contentOffset
+                        offset.y = -top
+                        
+                        self._scrollView.contentOffset = offset
                         }, completion: { (finished) in
                             // 刷新回调
                             DispatchQueue.main.async(execute: {
@@ -120,7 +125,7 @@ open class Header: Component {
             return
         }
         
-        scrollViewOriginalInset = _scrollView.contentInset
+        scrollViewOriginalInset = _scrollView.xpContentInset
         
         // 当前的contentOffset
         let offsetY = self._scrollView.contentOffsetY
@@ -130,10 +135,11 @@ open class Header: Component {
         if offsetY > happenOffsetTop { return }
         
         let normalpullingOffsetY = happenOffsetTop - self.height
+        
         if _scrollView.isDragging {
             if self.state == .normal && offsetY < normalpullingOffsetY {
                 self.state = .pull
-            }else if self.state == .pull && offsetY > normalpullingOffsetY {
+            }else if self.state == .pull && offsetY >= normalpullingOffsetY {
                 self.state = .normal
             }
         }else if self.state == .pull {

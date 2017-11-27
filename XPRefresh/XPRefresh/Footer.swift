@@ -9,7 +9,7 @@
 import UIKit
 
 /// 上拉刷新控件
-open class Footer: Component {
+public class Footer: Component {
     /// 刷新显示的文字label
     let xp_footerStateLabel = XPFooterStateLabel()
     
@@ -103,6 +103,7 @@ open class Footer: Component {
         guard let scrollView = self._scrollView else { return }
         scrollView.addObserver(self, forKeyPath: KeyPathContentOffset, options: [.new, .old], context: nil)
         scrollView.addObserver(self, forKeyPath: KeyPathContentSize, options: [.new, .old], context: nil)
+        scrollView.panGestureRecognizer.addObserver(self, forKeyPath: KeyPathPanState, options: [.new, .old], context: nil)
     }
     
     override func removeObservers() {
@@ -110,6 +111,7 @@ open class Footer: Component {
         guard let scrollView = self._scrollView else { return }
         scrollView.removeObserver(self, forKeyPath: KeyPathContentOffset)
         scrollView.removeObserver(self, forKeyPath: KeyPathContentSize)
+        scrollView.panGestureRecognizer.removeObserver(self, forKeyPath: KeyPathPanState)
     }
     
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -123,6 +125,8 @@ open class Footer: Component {
         
         if keyPath == KeyPathContentOffset {
             scrollViewContentOffsetDidChange(change)
+        }else if keyPath == KeyPathPanState {
+            scrollViewPanStateDidChange(change)
         }
     }
     
@@ -136,16 +140,17 @@ open class Footer: Component {
         if self.state != .normal || self.top == 0 {
             return
         }
+
         if (_scrollView.contentInsetTop + _scrollView.contentHeight > _scrollView.height) { // 内容超过一个屏幕
-            if (_scrollView.contentOffsetY >= _scrollView.contentHeight - _scrollView.height + self.height + _scrollView.contentInsetBottom - self.height) {
+            // 偏移量 + scrollView高度 >= 内容的高度+内容的便宜
+            if (_scrollView.contentOffsetY + _scrollView.height >= _scrollView.contentHeight  + self.height + _scrollView.contentInsetBottom - self.height) {
                 // 防止手松开时连续调用
-                guard let oldPoint = change?[.oldKey] as? CGPoint else {
+                guard let oldPoint = change?[.oldKey] as? CGPoint, let newPoint = change?[.newKey] as? CGPoint, newPoint.y > oldPoint.y else {
                     return
-                }
-                guard let newPoint = change?[.newKey] as? CGPoint else {
-                    return
-                }
-                if newPoint.y <= oldPoint.y { return }
+                }                
+                print("newpoiny",newPoint.y,"oldpoint",oldPoint.y)
+
+                
                 // 当底部刷新控件完全出现时，才刷新
                 UIView.animate(withDuration: AnimationDuration, animations: {
                     self.alpha = 1.0
@@ -159,7 +164,25 @@ open class Footer: Component {
                         self.state = .willRefresh;
                     }
                 }
-                
+                print(self.state)
+            }
+        }
+    }
+    /// 监听手势
+    func scrollViewPanStateDidChange(_ change: [NSKeyValueChangeKey: Any]?) {
+        guard self.state != .normal else {
+            return
+        }
+        if _scrollView.panGestureRecognizer.state == .ended { // 手松开
+            // 不够一个屏幕
+            if _scrollView.contentInsetTop + _scrollView.contentHeight <= _scrollView.height {
+                if _scrollView.contentOffsetY >= -_scrollView.contentInsetTop {
+                    self.state = .refreshing
+                }
+            }else { // 超出一个屏幕
+                if _scrollView.contentOffsetY >= _scrollView.contentHeight + _scrollView.contentInsetBottom - _scrollView.height {
+                    self.state = .refreshing
+                }
             }
         }
     }

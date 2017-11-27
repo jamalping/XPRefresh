@@ -20,15 +20,61 @@ class ViewController: UIViewController,UITableViewDataSource {
         tableView.rowHeight = 100
         self.view.addSubview(tableView)
         tableView.dataSource = self
-        tableView.xp_header = Header.init {
+//        tableView.xp_header = Header.init {
+//            print("正在刷新")
+//            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+//        }
+        
+//        tableView.xp.setHeader(refreshing: {
+//            print("d")
+//            self.numbers = 10
+//            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+//        })
+        
+        tableView.xp.setHeader({
+            print("刷新之前做什么")
+        }, refreshing: {
             print("正在刷新")
+            self.numbers = 10
             self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+        }) {
+            print("刷新结束之后做什么")
         }
+        
+        tableView.xp.setFooter(refreshing: {
+            print("上拉正在刷新")
+            self.numbers+=5
+            self.tableView.reloadData()
+//            self.tableView.xp.base.endRefresh()
+            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+        })
+        
+//        setFooter(refreshing: <#() -> ()#>) {
+//            print("上拉正在刷新")
+//            self.numbers+=5
+//            self.tableView.reloadData()
+//        }
+        
+//        tableView.xp.setFooter({
+//            print("刷新之前做什么")
+//        }, refreshing: {
+//            print("上拉正在刷新")
+//            self.numbers+=5
+//            self.tableView.reloadData()
+//            self.tableView.xp.base.endRefresh()
+////            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+//
+//        }) {
+//            print("刷新结束之后做什么")
+//        }
         
         tableView.xp_footer = Footer.init{
             print("上拉正在刷新")
             self.numbers+=5
-            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+            self.tableView.reloadData()
+//            self.tableView.xp_header?.endRefresh()
+            self.tableView.xp_footer?.endRefresh()
+//            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
         }
     }
     
@@ -54,6 +100,7 @@ class ViewController: UIViewController,UITableViewDataSource {
             cell = UITableViewCell.init(style: .default, reuseIdentifier: ii)
         }
         cell?.textLabel?.text = "\(indexPath.row)"
+        cell?.contentView.backgroundColor = .red
         return cell!
     }
 }

@@ -27,8 +27,26 @@ public enum RefreshState {
 }
 
 
+public protocol XPRefreshType {
+    associatedtype XPType
+    var xp: XPType { get }
+}
+
+public extension XPRefreshType {
+    public var xp : XPRefresh<Self> {
+        get { return XPRefresh.init(base: self) }
+    }
+}
+
+public struct XPRefresh<Base> {
+    public let base: Base
+    public init(base: Base) {
+        self.base = base
+    }
+}
+
 // MARK: --- 刷新控件基类
-open class Component: UIView {
+public class Component: UIView {
     
     public typealias callBack = () -> ()
     /// 记录scrollView刚开始的inset
@@ -67,7 +85,7 @@ open class Component: UIView {
         _scrollView = scrollView
         self.frame = CGRect.init(x: _scrollView!.left, y: -HeaderHeight, width: _scrollView!.width, height: HeaderHeight)
         _scrollView!.alwaysBounceVertical = true
-        scrollViewOriginalInset = _scrollView!.contentInset
+        scrollViewOriginalInset = _scrollView!.xpContentInset
         addObservers()
     }
     
@@ -79,7 +97,9 @@ open class Component: UIView {
 
 extension Component {
     public func endRefresh() {
-        self.state = .normal
+        DispatchQueue.main.async {
+            self.state = .normal
+        }
     }
 }
 

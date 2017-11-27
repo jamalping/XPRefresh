@@ -160,9 +160,9 @@
 			isa = PBXGroup;
 			children = (
 				FB608E7C1D2EBBAA002DADE2 /* Component.swift */,
-				FB608E7D1D2EBBAA002DADE2 /* EXtension */,
 				FB608E821D2EBBAA002DADE2 /* Footer.swift */,
 				FB608E831D2EBBAA002DADE2 /* Header.swift */,
+				FB608E7D1D2EBBAA002DADE2 /* EXtension */,
 			);
 			path = XPRefresh;
 			sourceTree = "<group>";

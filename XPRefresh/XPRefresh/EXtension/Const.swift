@@ -15,6 +15,7 @@ let AnimationDuration:TimeInterval = 0.35;
 /** 观察者监听的属性 */
 let KeyPathContentOffset = "contentOffset"
 let KeyPathContentSize = "contentSize"
+let KeyPathPanState = "panState"
 
 let HeaderNomalText = "下拉可以刷新"
 let HeaderPullingText = "松开立即刷新"
