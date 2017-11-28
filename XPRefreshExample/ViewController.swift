@@ -45,37 +45,8 @@ class ViewController: UIViewController,UITableViewDataSource {
             print("上拉正在刷新")
             self.numbers+=5
             self.tableView.reloadData()
-//            self.tableView.xp.base.endRefresh()
             self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
         })
-        
-//        setFooter(refreshing: <#() -> ()#>) {
-//            print("上拉正在刷新")
-//            self.numbers+=5
-//            self.tableView.reloadData()
-//        }
-        
-//        tableView.xp.setFooter({
-//            print("刷新之前做什么")
-//        }, refreshing: {
-//            print("上拉正在刷新")
-//            self.numbers+=5
-//            self.tableView.reloadData()
-//            self.tableView.xp.base.endRefresh()
-////            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
-//
-//        }) {
-//            print("刷新结束之后做什么")
-//        }
-        
-        tableView.xp_footer = Footer.init{
-            print("上拉正在刷新")
-            self.numbers+=5
-            self.tableView.reloadData()
-//            self.tableView.xp_header?.endRefresh()
-            self.tableView.xp_footer?.endRefresh()
-//            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
-        }
     }
     
     @objc func test() -> Void {
