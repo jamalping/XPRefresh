@@ -16,7 +16,7 @@ public class Footer: Component {
     /// 当前状态
     override var state: RefreshState  {
         didSet {
-            print(self._scrollView.contentSize,self._scrollView.contentInsetBottom)
+
             guard state != oldValue else {
                 return
             }
@@ -39,7 +39,7 @@ public class Footer: Component {
                 }
             default: break
             }
-            print(self._scrollView.contentSize,self._scrollView.contentInsetBottom)
+            print(self._scrollView!.contentSize,self._scrollView!.contentInsetBottom)
         }
     }
     
@@ -70,15 +70,19 @@ public class Footer: Component {
     
     override open func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
-        
+
+        guard let scrollView = newSuperview as? UIScrollView else {
+            return
+        }
+        _scrollView = scrollView
         if let _ = newSuperview {
             if !self.isHidden {
-                self._scrollView.contentInsetBottom += self.height
+                self._scrollView!.contentInsetBottom += self.height
             }
-            self.top = self._scrollView.contentHeight
+            self.top = self._scrollView!.contentHeight
         }else { // 被移除了
             if !self.isHidden {
-                self._scrollView.contentInsetBottom -= self.height
+                self._scrollView!.contentInsetBottom -= self.height
             }
         }
     }
@@ -88,10 +92,10 @@ public class Footer: Component {
             super.isHidden = newValue
             if !isHidden && newValue {
                 self.state = .normal
-                self._scrollView.contentInsetBottom -= self.height
+                self._scrollView!.contentInsetBottom -= self.height
             }else if isHidden && !newValue {
-                self._scrollView.contentInsetBottom += self.height
-                self.top = self._scrollView.contentHeight
+                self._scrollView!.contentInsetBottom += self.height
+                self.top = self._scrollView!.contentHeight
             }
         }
         get { return super.isHidden }
@@ -131,9 +135,14 @@ public class Footer: Component {
     }
     
     func scrollViewContentSizeDidChange() {
-        self.top = self._scrollView.contentHeight
+        self.top = self._scrollView!.contentHeight
     }
     
+    
+    /// 结束刷新，没有更多数据了
+    func endRefreshNorMoreData() {
+        self.state = .noMoreData
+    }
     
     /// 监听ScrollView的滚动
     func scrollViewContentOffsetDidChange(_ change: [NSKeyValueChangeKey: Any]?) {
@@ -141,9 +150,9 @@ public class Footer: Component {
             return
         }
 
-        if (_scrollView.contentInsetTop + _scrollView.contentHeight > _scrollView.height) { // 内容超过一个屏幕
+        if (_scrollView!.contentInsetTop + _scrollView!.contentHeight > _scrollView!.height) { // 内容超过一个屏幕
             // 偏移量 + scrollView高度 >= 内容的高度+内容的便宜
-            if (_scrollView.contentOffsetY + _scrollView.height >= _scrollView.contentHeight  + self.height + _scrollView.contentInsetBottom - self.height) {
+            if (_scrollView!.contentOffsetY + _scrollView!.height >= _scrollView!.contentHeight  + self.height + _scrollView!.contentInsetBottom - self.height) {
                 // 防止手松开时连续调用
                 guard let oldPoint = change?[.oldKey] as? CGPoint, let newPoint = change?[.newKey] as? CGPoint, newPoint.y > oldPoint.y else {
                     return
@@ -173,14 +182,14 @@ public class Footer: Component {
         guard self.state != .normal else {
             return
         }
-        if _scrollView.panGestureRecognizer.state == .ended { // 手松开
+        if _scrollView!.panGestureRecognizer.state == .ended { // 手松开
             // 不够一个屏幕
-            if _scrollView.contentInsetTop + _scrollView.contentHeight <= _scrollView.height {
-                if _scrollView.contentOffsetY >= -_scrollView.contentInsetTop {
+            if _scrollView!.contentInsetTop + _scrollView!.contentHeight <= _scrollView!.height {
+                if _scrollView!.contentOffsetY >= -_scrollView!.contentInsetTop {
                     self.state = .refreshing
                 }
             }else { // 超出一个屏幕
-                if _scrollView.contentOffsetY >= _scrollView.contentHeight + _scrollView.contentInsetBottom - _scrollView.height {
+                if _scrollView!.contentOffsetY >= _scrollView!.contentHeight + _scrollView!.contentInsetBottom - _scrollView!.height {
                     self.state = .refreshing
                 }
             }

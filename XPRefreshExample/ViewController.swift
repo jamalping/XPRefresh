@@ -42,17 +42,20 @@ class ViewController: UIViewController,UITableViewDataSource {
         }
         
         tableView.xp.setFooter(refreshing: {
-            print("上拉正在刷新")
-            self.numbers+=5
-            self.tableView.reloadData()
-            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
+            self.tableView.xp_footer?.state = .noMoreData
+//            print("上拉正在刷新")
+//            self.numbers+=5
+//            self.tableView.reloadData()
+//            self.perform(#selector(ViewController.test), with: nil, afterDelay: 2)
         })
     }
     
     @objc func test() -> Void {
-        self.tableView.reloadData()
+        
+        
         tableView.xp_header?.endRefresh()
         tableView.xp_footer?.endRefresh()
+        
     }
     
     override func didReceiveMemoryWarning() {

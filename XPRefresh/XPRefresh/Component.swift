@@ -52,7 +52,7 @@ public class Component: UIView {
     /// 记录scrollView刚开始的inset
     var scrollViewOriginalInset: UIEdgeInsets = UIEdgeInsets.zero
     /** 父控件 */
-    weak var _scrollView: UIScrollView!
+    var _scrollView: UIScrollView?
     
     /// 当前的刷新状态
     var state = RefreshState.normal

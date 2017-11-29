@@ -30,7 +30,7 @@ public class Header: Component {
                 if oldValue != .refreshing { return }
                 // 恢复inset和offset
                 UIView.animate(withDuration: AnimationDuration, animations: {
-                    self._scrollView.contentInsetTop += self.insetTop
+                    self._scrollView!.contentInsetTop += self.insetTop
                     }, completion: { (finished) in
                         if let EndreshingCallBack = self.endreshingCallBack {
                             EndreshingCallBack()
@@ -45,12 +45,12 @@ public class Header: Component {
                 DispatchQueue.main.async(execute: {
                     UIView.animate(withDuration: AnimationDuration, animations: {
                         let top = self.scrollViewOriginalInset.top + self.height
-                        self._scrollView.contentInsetTop = top
+                        self._scrollView!.contentInsetTop = top
                         // 设置滚动位置
-                        var offset = self._scrollView.contentOffset
+                        var offset = self._scrollView!.contentOffset
                         offset.y = -top
                         
-                        self._scrollView.contentOffset = offset
+                        self._scrollView!.contentOffset = offset
                         }, completion: { (finished) in
                             // 刷新回调
                             DispatchQueue.main.async(execute: {
@@ -117,18 +117,18 @@ public class Header: Component {
         if self.state == .refreshing {
             guard let _ = self.window else { return }
             // seactionHeader停留解决
-            var insetTop = -self._scrollView.contentOffsetY > scrollViewOriginalInset.top ?  -self._scrollView.contentOffsetY : scrollViewOriginalInset.top
+            var insetTop = -self._scrollView!.contentOffsetY > scrollViewOriginalInset.top ?  -self._scrollView!.contentOffsetY : scrollViewOriginalInset.top
             insetTop = (insetTop > self.height + scrollViewOriginalInset.top) ? self.height + scrollViewOriginalInset.top : insetTop
-            self._scrollView.contentInsetTop = insetTop;
+            self._scrollView!.contentInsetTop = insetTop;
             
             self.insetTop = scrollViewOriginalInset.top - insetTop;
             return
         }
         
-        scrollViewOriginalInset = _scrollView.xpContentInset
+        scrollViewOriginalInset = _scrollView!.xpContentInset
         
         // 当前的contentOffset
-        let offsetY = self._scrollView.contentOffsetY
+        let offsetY = self._scrollView!.contentOffsetY
         // 头部空间刚好出现的offset
         let happenOffsetTop = -scrollViewOriginalInset.top
         // 看不见头部控件，直接返回.
@@ -136,7 +136,7 @@ public class Header: Component {
         
         let normalpullingOffsetY = happenOffsetTop - self.height
         
-        if _scrollView.isDragging {
+        if _scrollView!.isDragging {
             if self.state == .normal && offsetY < normalpullingOffsetY {
                 self.state = .pull
             }else if self.state == .pull && offsetY >= normalpullingOffsetY {
